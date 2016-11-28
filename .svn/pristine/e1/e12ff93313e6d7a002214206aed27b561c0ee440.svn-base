@@ -1,0 +1,139 @@
+package com.example.srecko.agrohelper;
+
+import android.content.Intent;
+import android.support.v4.content.res.ResourcesCompat;
+import android.support.v7.app.AppCompatActivity;
+import android.os.Bundle;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.Spinner;
+import android.widget.TextView;
+import android.support.v7.widget.ListPopupWindow;
+
+public class ParcelInfoActivity extends AppCompatActivity {
+    private Intent intent;
+    private int pos;
+    private TextView txtIme,txtTip;
+    private EditText editIme, editTip;
+    private AppAll myApp;
+    private Spinner spinToWin;
+   //private  DropDownListView dropTip;
+    private ImageView imageTip;
+    private Button btnChange, btnSave;
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_parcel_info);
+        myApp=(AppAll) getApplication();
+        editIme=(EditText) findViewById(R.id.editIme);
+        //editTip=(EditText)findViewById(R.id.editTip);
+        txtIme=(TextView) findViewById(R.id.txtIme);
+        //txtTip=(TextView) findViewById(R.id.txtTip);
+        imageTip=(ImageView) findViewById(R.id.imageTip);
+        btnChange=(Button) findViewById(R.id.buttonChange);
+        btnSave=(Button) findViewById(R.id.buttonSave);
+        spinToWin=(Spinner) findViewById(R.id.tipSpin);
+        String[] items = new String[]{"GOZD", "POLJE", "TRAVNIK"};
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item, items);
+        adapter.setDropDownViewResource(R.layout.support_simple_spinner_dropdown_item);
+        spinToWin.setAdapter(adapter);
+        set();
+        if(intent==null)
+            intent = getIntent();
+        btnChange.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+               deSet();
+            }
+        });
+        btnSave.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View view)
+            {
+                myApp.getParcela(pos).setIme_parcele(editIme.getText().toString());
+                myApp.save();
+                finish();
+            }
+        });
+        spinToWin.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                switch (position) {
+                    case 0:
+                        myApp.getParcela(pos).setTip(Tip_parcele.GOZD);
+                        break;
+                    case 1:
+                        myApp.getParcela(pos).setTip(Tip_parcele.POLJE);
+                        break;
+                    case 2:
+                        myApp.getParcela(pos).setTip(Tip_parcele.TRAVNIK);
+                        break;
+                }
+            }
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+            }
+        });
+        }
+    private void deSet()
+    {
+        txtIme.setEnabled(false);
+        txtIme.setVisibility(View.INVISIBLE);
+        editIme.setEnabled(true);
+       // editTip.setVisibility(View.VISIBLE);
+        //txtTip.setEnabled(false);
+        //txtTip.setVisibility(View.INVISIBLE);
+        //editTip.setEnabled(true);
+        editIme.setVisibility(View.VISIBLE);
+        spinToWin.setEnabled(true);
+        spinToWin.setVisibility(View.VISIBLE);
+    }
+
+    private void set()
+    {
+        txtIme.setEnabled(true);
+        editIme.setEnabled(false);
+        //txtTip.setEnabled(true);
+        //editTip.setEnabled(false);
+        txtIme.setVisibility(View.VISIBLE);
+        //editTip.setVisibility(View.INVISIBLE);
+        //txtTip.setVisibility(View.VISIBLE);
+        editIme.setVisibility(View.INVISIBLE);
+        spinToWin.setEnabled(true);
+        spinToWin.setVisibility(View.VISIBLE);
+    }
+
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if(intent==null)
+            intent = getIntent();
+        else if (intent!=null) {
+            set();
+            String ime= intent.getStringExtra("Parcela ime");
+            String tip= intent.getStringExtra("Parcela tip");
+            pos=intent.getIntExtra("Index",0);
+            txtIme.setText(ime);
+            //txtTip.setText(tip);
+            editIme.setText(ime);
+            //editTip.setText(tip);<--bug i think #Šket
+            switch (tip)
+            {
+                case "GOZD":
+                    imageTip.setImageDrawable(ResourcesCompat.getDrawable(getResources(),R.drawable.gozd,null));
+                    break;
+                case "POLJE":
+                    imageTip.setImageDrawable(ResourcesCompat.getDrawable(getResources(),R.drawable.polje,null));
+                    break;
+                case "TRAVNIK":
+                    imageTip.setImageDrawable(ResourcesCompat.getDrawable(getResources(),R.drawable.travnik,null));
+                    break;
+            }
+        }
+    }
+}

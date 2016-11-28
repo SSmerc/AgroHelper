@@ -1,0 +1,77 @@
+package com.example.srecko.agrohelper;
+
+import android.graphics.Point;
+import android.provider.ContactsContract;
+import android.provider.ContactsContract.CommonDataKinds;
+
+import java.io.Serializable;
+import java.util.ArrayList;
+/**
+ * Created by Srečko on 20. 04. 2016.
+ */
+public class DataAll implements Serializable{
+
+    private ArrayList<Parcela> parcele;
+    public DataAll() {
+        this.parcele = new ArrayList<>();
+    }
+    private  void izbrisiVseParcele()
+    {
+        parcele.clear();
+    }
+    private void dodajParcelo(Parcela p)
+    {
+        parcele.add(p);
+    }
+    public Parcela vrniParcelo(int index)
+    {
+        return parcele.get(index);
+    }
+
+    public int steviloParcel()
+    {
+        return parcele.size();
+    }
+
+    public void setData()
+    {
+        ArrayList<Point> par = new ArrayList<>();
+        par.add(new Point(4,4));
+        par.add(new Point(6,7));
+        par.add(new Point(4,6));
+        parcele=new ArrayList<>();
+        Parcela o1 = new Parcela("Polje1",par,Tip_parcele.POLJE);
+        Parcela o2 = new Parcela("Polje2",par,Tip_parcele.POLJE);
+        Parcela o3 = new Parcela("Travnik",par,Tip_parcele.TRAVNIK);
+        Parcela o4 = new Parcela("Gozd",par,Tip_parcele.GOZD);
+        Parcela o5 = new Parcela("Punkl",par,Tip_parcele.TRAVNIK);
+        Parcela o6 = new Parcela("Hosta",par,Tip_parcele.GOZD);
+        dodajParcelo(o1);
+        dodajParcelo(o2);
+        dodajParcelo(o3);
+        dodajParcelo(o4);
+        dodajParcelo(o5);
+        dodajParcelo(o6);
+    }
+   /* private ArrayList<Oseba> osebe;
+
+    private DataAll()
+    {
+        osebe= new ArrayList<>();
+    }
+    private void dodajOsebo(Oseba o)
+    {
+        osebe.add(o);
+    }
+
+
+    public Oseba vrniOsebo(int index)
+    {
+        return osebe.get(index);
+    }
+
+    public int steviloOseb()
+    {
+        return osebe.size();
+    }*/
+}

@@ -1,0 +1,68 @@
+package com.example.srecko.agrohelper;
+
+import android.graphics.Point;
+import android.support.annotation.NonNull;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.List;
+import java.util.ListIterator;
+
+/**
+ * Created by Srečko on 20. 04. 2016.
+ */
+
+public class Parcela {
+    private String ime_parcele;
+    private ArrayList<Point> parcela;
+    private Tip_parcele tip;
+    public Parcela()
+    {
+        ime_parcele="Nova parcela";
+       parcela= new ArrayList<>();
+        tip=Tip_parcele.POLJE;
+    }
+
+    private void dodaj(Point p)
+    {
+        parcela.add(p);
+    }
+    private void izbrisiParcelo()
+    {
+        parcela.clear();
+        ime_parcele="";
+        tip=null;
+    }
+
+    public String getIme_parcele() {
+        return ime_parcele;
+    }
+
+    public void setIme_parcele(String ime_parcele) {
+        this.ime_parcele = ime_parcele;
+    }
+
+    public Tip_parcele getTip() {
+        return tip;
+    }
+
+    public void setTip(Tip_parcele tip) {
+        this.tip = tip;
+    }
+
+    public ArrayList<Point> getParcela() {
+        return parcela;
+    }
+
+    public void setParcela(ArrayList<Point> parcela) {
+        this.parcela = parcela;
+    }
+
+    public Parcela(String ime_parcele, ArrayList<Point> parcela, Tip_parcele tip) {
+        this.ime_parcele = ime_parcele;
+        this.parcela = parcela;
+        this.tip = tip;
+    }
+}
