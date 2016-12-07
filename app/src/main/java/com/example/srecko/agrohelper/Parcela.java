@@ -21,12 +21,18 @@ public class Parcela {
     private ArrayList<LatLng> parcela;
     private Tip_parcele tip;
     private ArrayList<Izdelek> izdelki;
+    private ParcelInfo pi;
+
+
+
     public Parcela()
     {
         ime_parcele="Nova parcela";
        parcela= new ArrayList<>();
         izdelki=new ArrayList<>();
         tip=Tip_parcele.POLJE;
+        pi= new ParcelInfo();
+
     }
 
     public void dodaj(LatLng p)
@@ -73,11 +79,13 @@ public class Parcela {
         this.parcela = parcela;
     }
 
-    public Parcela(String ime_parcele, ArrayList<LatLng> parcela, Tip_parcele tip) {
+    public Parcela(String ime_parcele, ArrayList<LatLng> parcela, Tip_parcele tip, ParcelInfo pi) {
         this.ime_parcele = ime_parcele;
         this.parcela = parcela;
         this.tip = tip;
+        this.pi=pi;
     }
+    public ParcelInfo getParcelInfo(){return pi;}
     public void addIzdelek(Izdelek i)
     {
         izdelki.add(i);

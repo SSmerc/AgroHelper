@@ -34,6 +34,10 @@ public class DataAll implements Serializable{
     {
         return parcele.size();
     }
+    public ParcelInfo vrniParcelInfo(int index)
+    {
+        return parcele.get(index).getParcelInfo();
+    }
 
     public void setData()
     {
@@ -73,11 +77,16 @@ public class DataAll implements Serializable{
         par5.add(new LatLng(46.153956f,15.333423f));
         par5.add(new LatLng(46.153972f,15.333071f));
         parcele=new ArrayList<>();
-        Parcela o1 = new Parcela("Njiva za podom",par1,Tip_parcele.POLJE);
-        Parcela o2 = new Parcela("Njiva nad sosedom",par2,Tip_parcele.POLJE);
-        Parcela o3 = new Parcela("Lipekov",par3,Tip_parcele.TRAVNIK);
-        Parcela o4 = new Parcela("Grički gozd",par4,Tip_parcele.GOZD);
-        Parcela o5 = new Parcela("Punkl",par5,Tip_parcele.TRAVNIK);
+        ParcelInfo p1=new ParcelInfo(200,"1435");
+        ParcelInfo p2=new ParcelInfo(150,"1436");
+        ParcelInfo p3=new ParcelInfo(2000,"1437");
+        ParcelInfo p4=new ParcelInfo(1354.4,"1438");
+        ParcelInfo p5=new ParcelInfo(4651.7,"1439");
+        Parcela o1 = new Parcela("Njiva za podom",par1,Tip_parcele.POLJE,p1);
+        Parcela o2 = new Parcela("Njiva nad sosedom",par2,Tip_parcele.POLJE,p2);
+        Parcela o3 = new Parcela("Lipekov",par3,Tip_parcele.TRAVNIK,p3);
+        Parcela o4 = new Parcela("Grički gozd",par4,Tip_parcele.GOZD,p4);
+        Parcela o5 = new Parcela("Punkl",par5,Tip_parcele.TRAVNIK,p5);
         dodajParcelo(o1);
         dodajParcelo(o2);
         dodajParcelo(o3);
