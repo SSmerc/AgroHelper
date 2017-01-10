@@ -51,6 +51,7 @@ public class AppAll extends Application{
     }
     public void addParcela(Parcela p){all.dodajParcelo(p);}
     public void addLLParcela(int i, ArrayList<LatLng> koo){getParcela(i).setParcela(koo);}
+    public void addSurfaceArea(int i, double value){getParcela(i).getParcelInfo().setPovrsina(value);}
     public int size(){return all.steviloParcel();}
     /* Checks if external storage is available for read and write */
     public boolean isExternalStorageWritable() {

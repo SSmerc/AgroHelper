@@ -32,7 +32,10 @@ public class DataAll implements Serializable{
     public void izbrisiParcelo(int i){parcele.remove(i);}
     public int steviloParcel()
     {
-        return parcele.size();
+        if(parcele.size()!=0)
+            return parcele.size();
+        else
+            return 0;
     }
     public ParcelInfo vrniParcelInfo(int index)
     {
@@ -41,7 +44,7 @@ public class DataAll implements Serializable{
 
     public void setData()
     {
-        ArrayList<LatLng> par1 = new ArrayList<>();
+       /* ArrayList<LatLng> par1 = new ArrayList<>();
         par1.add(new LatLng(46.154421f,15.331252f));
         par1.add(new LatLng(46.154550f,15.332529f));
         par1.add(new LatLng(46.154193f,15.332556f));
@@ -91,27 +94,6 @@ public class DataAll implements Serializable{
         dodajParcelo(o2);
         dodajParcelo(o3);
         dodajParcelo(o4);
-        dodajParcelo(o5);
+        dodajParcelo(o5);*/
     }
-   /* private ArrayList<Oseba> osebe;
-
-    private DataAll()
-    {
-        osebe= new ArrayList<>();
-    }
-    private void dodajOsebo(Oseba o)
-    {
-        osebe.add(o);
-    }
-
-
-    public Oseba vrniOsebo(int index)
-    {
-        return osebe.get(index);
-    }
-
-    public int steviloOseb()
-    {
-        return osebe.size();
-    }*/
 }

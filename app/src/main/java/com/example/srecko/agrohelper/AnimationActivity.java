@@ -75,7 +75,7 @@ public class AnimationActivity extends AppCompatActivity implements Animation.An
         animCorn.setAnimationListener(this);
         animFarmer.setAnimationListener(this);
         animTomato.setAnimationListener(this);
-        basket.startAnimation(animBasket);
+       /* basket.startAnimation(animBasket);
         new Handler().postDelayed(new Runnable()
         {
             @Override
@@ -163,7 +163,10 @@ public class AnimationActivity extends AppCompatActivity implements Animation.An
                 }
             }, 2000);
         }
-    }, 1000);
+    }, 1000);*/
+        //temp
+        Intent dva = new Intent(AnimationActivity.this, DataActivity.class);
+        startActivity(dva);
     }
 
     @Override

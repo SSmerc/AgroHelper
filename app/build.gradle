@@ -29,9 +29,10 @@ dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
     testCompile 'junit:junit:4.12'
     compile 'com.android.support:appcompat-v7:23.4.0'
-    compile 'com.google.android.gms:play-services:8.4.0'
+    compile 'com.google.android.gms:play-services:10.0.1'
     compile 'com.android.support:design:23.4.0'
     compile files('src/main/libs/gson-2.2.2.jar')
     compile files('src/main/libs/ksoap2.jar')
     compile 'com.github.CodeFalling:RecyclerViewSwipeDismiss:v1.1.2'
+    compile files('src/main/libs/wekaSTRIPPED.jar')
 }

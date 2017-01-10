@@ -90,5 +90,10 @@ public class Parcela {
     {
         izdelki.add(i);
     }
-    public int sizeIzdelki(){return izdelki.size();}
+    public int sizeIzdelki(){
+        if(izdelki.size()!=0)
+            return izdelki.size();
+        else
+            return 0;
+    }
 }
