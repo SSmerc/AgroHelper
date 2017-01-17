@@ -27,14 +27,14 @@ public class AnimationActivity extends AppCompatActivity implements Animation.An
         // TODO Auto-generated method stub
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_animation);
-        hay_f=(ImageView) findViewById(R.id.hayFImg);
-        farmer= (ImageView) findViewById(R.id.farmerImg);
-        corn= (ImageView) findViewById(R.id.cornImg);
-        carrot= (ImageView) findViewById(R.id.carrotImg);
-        potato= (ImageView) findViewById(R.id.potatoImg);
-        basket= (ImageView) findViewById(R.id.basketImg);
-        tomato=(ImageView) findViewById(R.id.tomatoImg);
-        txt= (TextView) findViewById(R.id.txt);
+        hay_f = (ImageView) findViewById(R.id.hayFImg);
+        farmer = (ImageView) findViewById(R.id.farmerImg);
+        corn = (ImageView) findViewById(R.id.cornImg);
+        carrot = (ImageView) findViewById(R.id.carrotImg);
+        potato = (ImageView) findViewById(R.id.potatoImg);
+        basket = (ImageView) findViewById(R.id.basketImg);
+        tomato = (ImageView) findViewById(R.id.tomatoImg);
+        txt = (TextView) findViewById(R.id.txt);
         txt.setVisibility(View.INVISIBLE);
         farmer.setVisibility(View.INVISIBLE);
         hay_f.setVisibility(View.INVISIBLE);
@@ -54,11 +54,11 @@ public class AnimationActivity extends AppCompatActivity implements Animation.An
                 R.anim.fade_in);
         animFarmer = AnimationUtils.loadAnimation(getApplicationContext(),
                 R.anim.farmer);
-        animTomato= AnimationUtils.loadAnimation(getApplicationContext(),R.anim.animation_tomato);
-        animHayF= AnimationUtils.loadAnimation(getApplicationContext(),R.anim.hay_f);
-        animTxt = AnimationUtils.loadAnimation(getApplicationContext(),R.anim.fade_in);
-        animfade = AnimationUtils.loadAnimation(getApplicationContext(),R.anim.fade_out);
-        animTemp = AnimationUtils.loadAnimation(getApplicationContext(),R.anim.fade_out);
+        animTomato = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.animation_tomato);
+        animHayF = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.hay_f);
+        animTxt = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.fade_in);
+        animfade = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.fade_out);
+        animTemp = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.fade_out);
         farmer.setImageResource(R.drawable.farmer);
         corn.setImageResource(R.drawable.corn);
         carrot.setImageResource(R.drawable.carrot);
@@ -75,98 +75,79 @@ public class AnimationActivity extends AppCompatActivity implements Animation.An
         animCorn.setAnimationListener(this);
         animFarmer.setAnimationListener(this);
         animTomato.setAnimationListener(this);
-       /* basket.startAnimation(animBasket);
-        new Handler().postDelayed(new Runnable()
-        {
+        basket.startAnimation(animBasket);
+        new Handler().postDelayed(new Runnable() {
             @Override
-            public void run()
-            {
-            carrot.setVisibility(View.VISIBLE);
-            carrot.startAnimation(animCarrot);
-            corn.setVisibility(View.VISIBLE);
-            corn.startAnimation(animCorn);
-            potato.setVisibility(View.VISIBLE);
-            potato.startAnimation(animPotato);
-            tomato.setVisibility(View.VISIBLE);
-            tomato.startAnimation(animTomato);
-            new Handler().postDelayed(new Runnable()
-            {
-                @Override
-                public void run()
-                {
-                    hay_f.setVisibility(View.VISIBLE);
-                    hay_f.startAnimation(animHayF);
-                    new Handler().postDelayed(new Runnable()
-                    {
-                        @Override
-                        public void run()
-                        {
-                            farmer.setVisibility(View.VISIBLE);
-                            farmer.startAnimation(animFarmer);
-                            new Handler().postDelayed(new Runnable()
-                            {
-                                @Override
-                                public void run()
-                                {
-                                    carrot.startAnimation(animfade);
-                                    corn.startAnimation(animfade);
-                                    potato.startAnimation(animfade);
-                                    tomato.startAnimation(animfade);
-                                    hay_f.startAnimation(animfade);
-                                    farmer.startAnimation(animfade);
-                                    basket.startAnimation(animfade);
+            public void run() {
+                carrot.setVisibility(View.VISIBLE);
+                carrot.startAnimation(animCarrot);
+                corn.setVisibility(View.VISIBLE);
+                corn.startAnimation(animCorn);
+                potato.setVisibility(View.VISIBLE);
+                potato.startAnimation(animPotato);
+                tomato.setVisibility(View.VISIBLE);
+                tomato.startAnimation(animTomato);
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        hay_f.setVisibility(View.VISIBLE);
+                        hay_f.startAnimation(animHayF);
+                        new Handler().postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                farmer.setVisibility(View.VISIBLE);
+                                farmer.startAnimation(animFarmer);
+                                new Handler().postDelayed(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        carrot.startAnimation(animfade);
+                                        corn.startAnimation(animfade);
+                                        potato.startAnimation(animfade);
+                                        tomato.startAnimation(animfade);
+                                        hay_f.startAnimation(animfade);
+                                        farmer.startAnimation(animfade);
+                                        basket.startAnimation(animfade);
 
-                                    new Handler().postDelayed(new Runnable()
-                                    {
-                                        @Override
-                                        public void run()
-                                        {
-                                            txt.setVisibility(View.VISIBLE);
-                                            txt.startAnimation(animTxt);
-                                            new Handler().postDelayed(new Runnable()
-                                            {
-                                                @Override
-                                                public void run()
-                                                {
-                                                    farmer.setVisibility(View.INVISIBLE);
-                                                    hay_f.setVisibility(View.INVISIBLE);
-                                                    corn.setVisibility(View.INVISIBLE);
-                                                    potato.setVisibility(View.INVISIBLE);
-                                                    carrot.setVisibility(View.INVISIBLE);
-                                                    tomato.setVisibility(View.INVISIBLE);
-                                                    basket.setVisibility(View.INVISIBLE);
-                                                    new Handler().postDelayed(new Runnable()
-                                                    {
-                                                        @Override
-                                                        public void run()
-                                                        {
-                                                            txt.startAnimation(animTemp);
-                                                            new Handler().postDelayed(new Runnable()
-                                                            {
-                                                                @Override
-                                                                public void run()
-                                                                {
-                                                                    Intent dva = new Intent(AnimationActivity.this, DataActivity.class);
-                                                                    startActivity(dva);
-                                                                }
-                                                            }, 1000);
-                                                        }
-                                                    }, 1000);
-                                                }
-                                            }, 1000);
-                                        }
-                                    }, 1000);
-                                }
-                            }, 2500);
-                        }
-                    }, 500);
-                }
-            }, 2000);
-        }
-    }, 1000);*/
-        //temp
-        Intent dva = new Intent(AnimationActivity.this, DataActivity.class);
-        startActivity(dva);
+                                        new Handler().postDelayed(new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                txt.setVisibility(View.VISIBLE);
+                                                txt.startAnimation(animTxt);
+                                                new Handler().postDelayed(new Runnable() {
+                                                    @Override
+                                                    public void run() {
+                                                        farmer.setVisibility(View.INVISIBLE);
+                                                        hay_f.setVisibility(View.INVISIBLE);
+                                                        corn.setVisibility(View.INVISIBLE);
+                                                        potato.setVisibility(View.INVISIBLE);
+                                                        carrot.setVisibility(View.INVISIBLE);
+                                                        tomato.setVisibility(View.INVISIBLE);
+                                                        basket.setVisibility(View.INVISIBLE);
+                                                        new Handler().postDelayed(new Runnable() {
+                                                            @Override
+                                                            public void run() {
+                                                                txt.startAnimation(animTemp);
+                                                                new Handler().postDelayed(new Runnable() {
+                                                                    @Override
+                                                                    public void run() {
+                                                                        Intent dva = new Intent(AnimationActivity.this, DataActivity.class);
+                                                                        startActivity(dva);
+                                                                    }
+                                                                }, 1000);
+                                                            }
+                                                        }, 1000);
+                                                    }
+                                                }, 1000);
+                                            }
+                                        }, 1000);
+                                    }
+                                }, 2500);
+                            }
+                        }, 500);
+                    }
+                }, 2000);
+            }
+        }, 1000);
     }
 
     @Override

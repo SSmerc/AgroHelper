@@ -16,6 +16,7 @@ import android.widget.ExpandableListView.OnGroupExpandListener;
 
 public class DataActivity extends AppCompatActivity {
     private AppAll myApp;
+    private int lastExpandedPosition=-1;
     private ExpandableListAdapter listAdapter;
     private ExpandableListView expListView;
     @Override
@@ -49,30 +50,43 @@ public class DataActivity extends AppCompatActivity {
         expListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
             public boolean onItemLongClick(AdapterView<?> adapterView, View view, int i, long l) {
-                int itemType = ExpandableListView.getPackedPositionType(l);
-                if (itemType == ExpandableListView.PACKED_POSITION_TYPE_GROUP) {
-                    final int groupPosition = i;
-                    //do your per-group callback here
-                    AlertDialog alert = new AlertDialog.Builder(DataActivity.this)
-                            .setTitle("Opozorilo")
-                            .setMessage("Ali zelite izbrisati parcelo: "+myApp.getParcela(groupPosition).getIme_parcele())
-                            .setCancelable(false)
-                            .setPositiveButton("Da", new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface dialog, int id) {
-                                    listAdapter.delete(groupPosition);
-                                    listAdapter.notifyDataSetChanged();
-                                    myApp.removeParcela(groupPosition);
-                                    myApp.save();
-                                }
-                            })
-                            .setNegativeButton("Ne", null)
-                            .show();
-                    return true; //true if we consumed the click, false if not
+                    int itemType = ExpandableListView.getPackedPositionType(l);
+                    if (itemType == ExpandableListView.PACKED_POSITION_TYPE_GROUP) {
+                        try {
+                            final int groupPosition = i;
+                            //do your per-group callback here
+                            AlertDialog alert = new AlertDialog.Builder(DataActivity.this)
+                                    .setTitle("Opozorilo")
+                                    .setMessage("Ali zelite izbrisati parcelo: " + myApp.getParcela(groupPosition).getIme_parcele())
+                                    .setCancelable(false)
+                                    .setPositiveButton("Da", new DialogInterface.OnClickListener() {
+                                        public void onClick(DialogInterface dialog, int id) {
+                                            listAdapter.delete(groupPosition);
+                                            listAdapter.notifyDataSetChanged();
+                                            myApp.removeParcela(groupPosition);
+                                            myApp.save();
+                                        }
+                                    })
+                                    .setNegativeButton("Ne", null)
+                                    .show();
 
-                } else {
-                    // null item; we don't consume the click
-                    return false;
-                }
+                            return true; //true if we consumed the click, false if not
+                        }
+                        catch (Exception e)
+                        {
+                            AlertDialog alert = new AlertDialog.Builder(DataActivity.this)
+                                    .setTitle("Opozorilo")
+                                    .setMessage("Prislo je do napake pri brisanju: ")
+                                    .setCancelable(false)
+                                    .setPositiveButton("V redu", null)
+                                    .show();
+                            return false;
+                        }
+
+                    } else {
+                        // null item; we don't consume the click
+                        return false;
+                    }
             }
         });
         // Listview Group expanded listener
@@ -80,7 +94,11 @@ public class DataActivity extends AppCompatActivity {
 
             @Override
             public void onGroupExpand(int groupPosition) {
-
+                    if (lastExpandedPosition != -1
+                            && groupPosition != lastExpandedPosition) {
+                        expListView.collapseGroup(lastExpandedPosition);
+                    }
+                    lastExpandedPosition = groupPosition;
             }
         });
 
@@ -112,6 +130,9 @@ public class DataActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        listAdapter.notifyDataSetChanged();
+        if(lastExpandedPosition!=-1) {
+            expListView.collapseGroup(lastExpandedPosition);
+        }
+        listAdapter.setData();
     }
 }

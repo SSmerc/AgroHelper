@@ -50,16 +50,19 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter{
         }
     }
 
+    public void setData() {
+        _listDataHeader.clear();
+        _listDataChild.clear();
+        for (int i = 0; i < mDataset.steviloParcel(); i++) {
+            _listDataHeader.add(mDataset.vrniParcelo(i).getIme_parcele());
+            _listDataChild.put(mDataset.vrniParcelo(i).getIme_parcele(), mDataset.vrniParcelo(i).getParcelInfo());
+            notifyDataSetChanged();
+        }
+    }
     public void delete(int position) {
         _listDataHeader.remove(mDataset.vrniParcelo(position).getIme_parcele());
         _listDataChild.remove(mDataset.vrniParcelo(position).getIme_parcele());
     }
-    /*public ExpandableListAdapter(Context context, List<String> listDataHeader,
-                                 HashMap<String, List<String>> listChildData) {
-        this._context = context;
-        this._listDataHeader = listDataHeader;
-        this._listDataChild = listChildData;
-    }*/
 
     @Override
     public Object getChild(int groupPosition, int childPosititon) {
@@ -84,11 +87,9 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter{
         TextView txtPovrsina = (TextView) convertView
                 .findViewById(R.id.txtPovrsina);
         btnMore=(Button) convertView.findViewById(R.id.btnMore);
-        //txtPovrsina.setTypeface(null, Typeface.BOLD);
         txtPovrsina.setText("Povrsina: "+String.format("%.2f",child.getPovrsina())+" m2");
         TextView txtSt = (TextView) convertView
                 .findViewById(R.id.txtStparcele);
-        //txtSt.setTypeface(null, Typeface.BOLD);
        txtSt.setText("Stevilka: "+child.getStevilka());
        btnMore.setOnClickListener(new View.OnClickListener() {
             @Override

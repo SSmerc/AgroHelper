@@ -22,6 +22,7 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.location.LocationListener;
 import android.os.Bundle;
+import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
@@ -94,6 +95,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private String intTyp;
     private double lon, lat;
     private AppAll all;
+    private boolean pressed=true;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -114,49 +116,36 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         }
         else
             tocke = new ArrayList<>();
-        //layer = new KmlLayer(mMap, InputStream,getApplicationContext());
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(map);
         mapFragment.getMapAsync(this);
         lManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fabAddPoint);
         FloatingActionButton fabConnect = (FloatingActionButton) findViewById(R.id.fabConnect);
         FloatingActionButton fabDelete = (FloatingActionButton) findViewById(R.id.fabRemoveLast);
         if(intTyp.equals("ShowDraw")) {
-            fab.setOnClickListener(new View.OnClickListener() {
+            fabConnect.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    if(calculateAreaOfGPSPolygonOnEarthInSquareMeters(tocke)!=all.getParcela(index).getParcelInfo().getPovrsina())
+                    if(calculateAreaOfGPSPolygonOnEarthInSquareMeters(tocke)!=all.getParcela(index).getParcelInfo().getPovrsina()) {
+                        all.getParcela(index).deleteParcelaLatLng();
+                        all.getParcela(index).setParcelaLatLng(tocke);
                         all.getParcela(index).getParcelInfo().setPovrsina(calculateAreaOfGPSPolygonOnEarthInSquareMeters(tocke));
+                    }
                     finish();
-                    //updateMap();
-                /*Snackbar.make(view, "Marker dodan", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();*/
                 }
             });
-            fabConnect.setEnabled(false);
-            fabConnect.setVisibility(View.INVISIBLE);
-            fabDelete.setEnabled(false);
-            fabDelete.setVisibility(View.INVISIBLE);
-            /*fabConnect.setOnClickListener(new View.OnClickListener() {
+            fabDelete.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    drawOnMap();
-              Snackbar.make(view, "Lokacija dodana dodan", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+                    if(tocke.size()>=1) {
+                        tocke.remove(tocke.size() - 1);
+                        drawOnMap();
+                    }
                 }
-            });*/
+            });
         }
         else {
-            fab.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    updateMap();
-                /*Snackbar.make(view, "Marker dodan", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();*/
-                }
-            });
             fabConnect.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -184,12 +173,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     private void addPoint(LatLng latlng)
     {
-        if(!intTyp.equals("ShowDraw")) {
+       // if(!intTyp.equals("ShowDraw")) {
             LatLng place = latlng;
             mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(place, 17));
             tocke.add(place);
             drawOnMap();
-        }
+       // }
     }
 
     private void drawOnMap()
@@ -205,8 +194,16 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     }
     private void updateMap() {
         mMap.clear();
-        if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            return;
+        if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) ==
+                PackageManager.PERMISSION_GRANTED &&
+                ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) ==
+                        PackageManager.PERMISSION_GRANTED) {
+            mMap.setMyLocationEnabled(true);
+        }
+        else {
+            ActivityCompat.requestPermissions(MapsActivity.this,
+                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+                    10);
         }
         if(intTyp.equals("ShowDraw")) {
             LatLng place;
@@ -216,10 +213,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 place = new LatLng(lat, lon);
             mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(place, 18));
             drawOnMap();
-        }
-        else {
-            Location currentLocation = LocationServices.FusedLocationApi.getLastLocation(googleApiClient);
-            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(currentLocation.getLatitude(),currentLocation.getLongitude()), 18));
         }
     }
     private Boolean displayGpsStatus() {

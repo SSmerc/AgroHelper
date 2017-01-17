@@ -13,17 +13,9 @@
            android:layout_marginTop="60dp"
            android:id="@+id/expList"
            android:scrollbars="vertical"
+           android:groupIndicator="@null"
            ></ExpandableListView>
 
-
-     <!-- <android.support.v7.widget.RecyclerView
-           android:layout_width="match_parent"
-           android:layout_height="wrap_content"
-           android:layout_marginTop="60dp"
-           android:id="@+id/recview"
-           android:scrollbars="vertical"
-           >
-       </android.support.v7.widget.RecyclerView>-->
     <android.support.design.widget.AppBarLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

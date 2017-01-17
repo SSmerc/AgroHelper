@@ -17,14 +17,10 @@ public class Izdelek {
     public Izdelek() {
         naziv = datum=vrsta=presajanje=mesecSajenja=prezimna=rast="";
         casKaljenja=casRasti=0;
-
-       /* vrsta = new String[]{"Kapusnica", "Korenovka", "Solatnica", "Spinacnica", "Cebulnica", "Plodovka", "Strocnica", "Zito"};
-        presajanje = new String[]{"DA", "NE"};
-        prezimna = new String[]{"DA", "NE"};
-        meseciSajenja = new String[]{"Januar", "Februar", "Marec", "April", "Maj", "Junij", "Julij", "Avgust", "September", "Oktober", "November", "December"};
-        casKaljenja = 0;
-        casKaljenja = 0;
-        rast = new String[]{"Hitra rast", "Srednje hitra rast", "Pocasna rast"};*/
+    }
+    public Izdelek(String naziv,String datum) {
+        this.naziv = naziv;
+        this.datum=datum;
     }
 
     public Izdelek(String naziv, String datum, String vrsta, String presajanje, String mesecSajenja, String prezimna, String rast, int casKaljenja, int casRasti) {
@@ -82,19 +78,6 @@ public class Izdelek {
     public String getDatum() {
         return datum;
     }
-
-    /*public Izdelek(String naziv, String datum, int vrsta, int presajanje, int meseciSajenja, int prezimna, int r, int casKaljenja, int casRasti) {
-        this.naziv = naziv;
-        this.datum = datum;
-        this.vrsta = vrsta[];
-        this.presajanje = presajanje;
-        this.meseciSajenja = meseciSajenja;
-        this.prezimna = this.prezimna;
-        this.rast =;
-        this.casKaljenja = casKaljenja;
-        this.casRasti = casRasti;
-    }*/
-
 
     public void setDatum(String datum) {
         this.datum = datum;

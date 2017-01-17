@@ -3,6 +3,7 @@ package com.example.srecko.agrohelper;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.provider.CalendarContract;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.content.res.ResourcesCompat;
@@ -10,6 +11,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.InputType;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
@@ -23,6 +25,11 @@ import android.widget.Toast;
 
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
+
+import org.ksoap2.SoapEnvelope;
+import org.ksoap2.serialization.SoapObject;
+import org.ksoap2.serialization.SoapSerializationEnvelope;
+import org.ksoap2.transport.HttpTransportSE;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
@@ -53,8 +60,10 @@ public class ParcelInfoActivity extends AppCompatActivity implements View.OnClic
     private RecyclerView mRecyclerView;
     private RecyclerView.Adapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
-    private String name,pres,mesec,prez,rast,vrsta,className,date;
-    private int casR,casK;
+    private String className,date;
+    private String [] tmpIzd;
+    private  String tmpType;
+    private static String data,scanContent;
    // private TextView contentTxt,txtDate;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,8 +73,6 @@ public class ParcelInfoActivity extends AppCompatActivity implements View.OnClic
         editIme = (EditText) findViewById(R.id.editIme);
         editStevilka=(EditText) findViewById(R.id.editStevilka);
         imageTip = (ImageView) findViewById(R.id.imageTip);
-       // btnSave = (Button) findViewById(R.id.buttonSave);
-       // btnShowMap = (Button) findViewById(R.id.buttonShowMap);
         spinToWin = (Spinner) findViewById(R.id.tipSpin);
         fabAddIzdelek = (FloatingActionButton) findViewById(R.id.fabAddIzdelek);
         fabSave = (FloatingActionButton) findViewById(R.id.fabSave);
@@ -77,6 +84,8 @@ public class ParcelInfoActivity extends AppCompatActivity implements View.OnClic
         if (intent == null) {
             intent = getIntent();
             intTyp = intent.getStringExtra("Intent");
+            pos=intent.getIntExtra("Index",0);
+            tmpType=intent.getStringExtra("Parcela tip");
         }
         if (intTyp.equals("Info")) {
             //btn save
@@ -99,10 +108,6 @@ public class ParcelInfoActivity extends AppCompatActivity implements View.OnClic
                     startActivity(map);
                 }
             });
-            //btnAddPlant
-           // btnAddPlant = (Button)findViewById(R.id.buttonAddPlant);
-            //contentTxt = (TextView)findViewById(R.id.txtContent);
-           // txtDate = (TextView)findViewById(R.id.txtDate);
             fabAddIzdelek.setOnClickListener(this);
             spinToWin.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                 @Override
@@ -133,7 +138,7 @@ public class ParcelInfoActivity extends AppCompatActivity implements View.OnClic
             mRecyclerView.setLayoutManager(mLayoutManager);
             mAdapter = new MyAdapterIzdelki(myApp.getAll(),this,pos);
             mRecyclerView.setAdapter(mAdapter);
-            SwipeDismissRecyclerViewTouchListener listener = new SwipeDismissRecyclerViewTouchListener.Builder(
+            final SwipeDismissRecyclerViewTouchListener listener = new SwipeDismissRecyclerViewTouchListener.Builder(
                     mRecyclerView,
                     new SwipeDismissRecyclerViewTouchListener.DismissCallbacks() {
                         @Override
@@ -143,12 +148,20 @@ public class ParcelInfoActivity extends AppCompatActivity implements View.OnClic
 
                         @Override
                         public void onDismiss(View view) {
-                            // Do what you want when dismiss
-                            /*ArrayList<Izdelek> tmp= myApp.getParcela(mRecyclerView.getChildAdapterPosition(view)).getIzdelki();
-                            myApp.removeParcela(mRecyclerView.getChildAdapterPosition(view));
-                            mAdapter.notifyDataSetChanged();
-                            myApp.save();
-                            showDialog(String.format("Izbrisali ste izdelek "+tmp.getIme_parcele()));*/
+                          final int i= mRecyclerView.getChildLayoutPosition(view);
+                            AlertDialog alert = new AlertDialog.Builder(ParcelInfoActivity.this)
+                                    .setTitle("Opozorilo")
+                                    .setMessage("Ali želite izbrisati izdelek: "+myApp.getParcela(pos).getIzdelek(i))
+                                    .setCancelable(false)
+                                    .setPositiveButton("Da", new DialogInterface.OnClickListener() {
+                                        public void onClick(DialogInterface dialog, int id) {
+                                            myApp.getParcela(pos).deleteIzdelek(i);
+                                            myApp.save();
+                                            mAdapter.notifyDataSetChanged();
+                                        }
+                                    })
+                                    .setNegativeButton("Ne", null)
+                                    .show();
                         }
                     })
                     .setIsVertical(false)
@@ -157,14 +170,21 @@ public class ParcelInfoActivity extends AppCompatActivity implements View.OnClic
                                 @Override
                                 public void onTouch(int index) {
                                     // Do what you want when item be touched
-
                                 }
                             })
                     .setItemClickCallback(new SwipeDismissRecyclerViewTouchListener.OnItemClickCallBack() {
                         @Override
                         public void onClick(int position) {
-                            // Do what you want when item be clicked
+                            if (tmpType.equals("POLJE")) {
+                                Izdelek tt = myApp.getParcela(pos).getIzdelki().get(position);
+                                AlertDialog alert = new AlertDialog.Builder(ParcelInfoActivity.this)
+                                        .setTitle("Podatki o semenu")
+                                        .setMessage("Naziv:" + tt.getNaziv() + "\nVrsta: " + tt.getVrsta() + "\nPotrebno presajanje: " + tt.getPresajanje() + "\nMesec sajenja: " + tt.getMesecSajenja() + "\nPrezimna vrsta: " + tt.getPrezimna() + "\nCas kaljenja: " + String.valueOf(tt.getCasKaljenja()) + "\nCas rasti: " + String.valueOf(tt.getCasRasti()) + "\nRast: " + tt.getRast() + ".")
+                                        .setCancelable(false)
+                                        .setPositiveButton("V redu", null)
+                                        .show();
 
+                            }
                         }
                     }).create();
             mRecyclerView.setOnTouchListener(listener);
@@ -174,9 +194,6 @@ public class ParcelInfoActivity extends AppCompatActivity implements View.OnClic
             tmp= new Parcela();
             fabAddIzdelek.setEnabled(false);
             fabAddIzdelek.setVisibility(View.INVISIBLE);
-            /*btnSave.setText("Shrani novo parcelo");
-            btnSave.setEnabled(false);
-            btnShowMap.setText("Vnesi koordinate");*/
             fabSave.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -187,12 +204,23 @@ public class ParcelInfoActivity extends AppCompatActivity implements View.OnClic
             fabMap.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    tmp.setIme_parcele(editIme.getText().toString());
-                    tmp.getParcelInfo().setStevilka(editStevilka.getText().toString());
-                    myApp.addParcela(tmp);
-                    Intent addLL= new Intent(ParcelInfoActivity.this,MapsActivity.class);
-                    addLL.putExtra("Intent","addLL");
-                    startActivity(addLL);
+                    if(!editIme.getText().toString().equals("")&&!editStevilka.getText().toString().equals("")) {
+                        tmp.setIme_parcele(editIme.getText().toString());
+                        tmp.getParcelInfo().setStevilka(editStevilka.getText().toString());
+                        myApp.addParcela(tmp);
+                        Intent addLL = new Intent(ParcelInfoActivity.this, MapsActivity.class);
+                        addLL.putExtra("Intent", "addLL");
+                        startActivity(addLL);
+                    }
+                    else
+                    {
+                        AlertDialog alert = new AlertDialog.Builder(ParcelInfoActivity.this)
+                                .setTitle("Opozorilo")
+                                .setMessage("Niste vnesli imena in stevilke!")
+                                .setCancelable(false)
+                                .setPositiveButton("V redu",null)
+                                .show();
+                    }
                 }
             });
             spinToWin.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -220,106 +248,110 @@ public class ParcelInfoActivity extends AppCompatActivity implements View.OnClic
         }
     }
 
-    private void showDialog(String msg){
-        AlertDialog alert = new AlertDialog.Builder(ParcelInfoActivity.this)
-                .setTitle("Opozorilo")
-                .setMessage(msg)
-                .setCancelable(false)
-                .create();
-        alert.setCanceledOnTouchOutside(true);
-        alert.show();
-    }
     @Override
     public void onClick(View v) {
-        try {
-            ArffLoader source = new ArffLoader();
-            InputStream s= getAssets().open("projekt_1.arff");
-            source.setSource(s);
-            Instances data = source.getDataSet();
-            if (data.classIndex() == -1)
-                data.setClassIndex(data.numAttributes() - 1);
-            J48 tree = new J48();         // new instance of tree
-            tree.buildClassifier(data);   // build classifier
-            // 10-fold cross-validation
-            Evaluation evaluation = new Evaluation(data);
-            evaluation.crossValidateModel(tree, data, 10, new Debug.Random(1));
-        } catch (Exception e)
-        {
-            Log.e("Error", e.toString());
+        if(tmpType.equals("POLJE")) {
+            try {
+                ArffLoader source = new ArffLoader();
+                InputStream s = getAssets().open("projekt_1.arff");
+                source.setSource(s);
+                Instances data = source.getDataSet();
+                if (data.classIndex() == -1)
+                    data.setClassIndex(data.numAttributes() - 1);
+                J48 tree = new J48();         // new instance of tree
+                tree.buildClassifier(data);   // build classifier
+                // 10-fold cross-validation
+                Evaluation evaluation = new Evaluation(data);
+                evaluation.crossValidateModel(tree, data, 10, new Debug.Random(1));
+            } catch (Exception e) {
+                Log.e("Error", e.toString());
+            }
+            if (v.getId() == R.id.fabAddIzdelek) {
+                IntentIntegrator scanIntegrator = new IntentIntegrator(this);
+                scanIntegrator.initiateScan();
+            }
         }
-        if(v.getId()==R.id.fabAddIzdelek){
-            IntentIntegrator scanIntegrator = new IntentIntegrator(this);
-            scanIntegrator.initiateScan();
+        else if(tmpType.equals("GOZD"))
+        {
+            DateFormat df = new SimpleDateFormat("dd.MM.yyyy");
+            date = df.format(Calendar.getInstance().getTime());
+            final EditText input = new EditText(this);
+            input.setInputType(InputType.TYPE_CLASS_NUMBER);
+            AlertDialog alert = new AlertDialog.Builder(ParcelInfoActivity.this)
+                    .setTitle("")
+                    .setMessage("Vnesite m3: ")
+                    .setView(input)
+                    .setCancelable(false)
+                    .setPositiveButton("V redu",new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int whichButton) {
+                            Izdelek izd = new Izdelek(input.getText().toString()+" m3",date);
+                            myApp.getParcela(pos).addIzdelek(izd);
+                            myApp.save();
+                            mAdapter.notifyDataSetChanged();
+                        }
+                    })
+                    .setNegativeButton("Prekliči",null)
+                    .show();
+        }
+        else if(tmpType.equals("TRAVNIK"))
+        {
+            DateFormat df = new SimpleDateFormat("dd.MM.yyyy");
+            date = df.format(Calendar.getInstance().getTime());
+            final EditText input = new EditText(this);
+            AlertDialog alert = new AlertDialog.Builder(ParcelInfoActivity.this)
+                    .setTitle("")
+                    .setMessage("Vnesite ime košnje: ")
+                    .setView(input)
+                    .setCancelable(false)
+                    .setPositiveButton("V redu",new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int whichButton) {
+                            Izdelek izd = new Izdelek(input.getText().toString(),date);
+                            myApp.getParcela(pos).addIzdelek(izd);
+                            myApp.save();
+                            mAdapter.notifyDataSetChanged();
+                        }
+                    })
+                    .setNegativeButton("Prekliči",null)
+                    .show();
         }
     }
-    public void onActivityResult(int requestCode, int resultCode, Intent intent) {
-        IntentResult scanningResult = IntentIntegrator.parseActivityResult(requestCode, resultCode, intent);
-        if (scanningResult != null) {
-            DateFormat df= new SimpleDateFormat("dd.MM.yyyy");
-            date=df.format(Calendar.getInstance().getTime());
-            String scanContent = scanningResult.getContents();
-            /*ServiceTask task = new ServiceTask();
-            task.execute(scanContent,name);*/
-            switch(scanContent) {
-                case "1":name="Solata - Majska Kraljica";
-                    pres="DA";
-                    vrsta="Solatnica";
-                    mesec="Marec";
-                    prez="NE";
-                    casK=35;
-                    casR=90;
-                    break;
-                case "2":name="Cebula";
-                    pres="NE";
-                    mesec="Maj";
-                    vrsta="Cebulnica";
-                    prez="NE";
-                    casK=30;
-                    casR=80;
-                    break;
-                case "3":name="Korenje - rumeno";
-                    pres="NE";
-                    mesec="April";
-                    vrsta="Korenovka";
-                    prez="NE";
-                    casK=18;
-                    casR=88;
-                    break;
-                case "4":name="Rdeča pesa";
-                    pres="DA";
-                    mesec="Junij";
-                    vrsta="Korenovka";
-                    prez="NE";
-                    casK=20;
-                    casR=100;
-                    break;
-                case "5":name="Brokoli";
-                    pres="NE";
-                    mesec="Avgust";
-                    vrsta="Kapusnica";
-                    prez="NE";
-                    casK=10;
-                    casR=120;
-                    break;
-                case "6":name="Radič";
-                    pres="DA";
-                    mesec="Marec";
-                    vrsta="Solatnica";
-                    prez="NE";
-                    casK=24;
-                    casR=50;
-                    break;
-                case "7":name="Bučke";
-                    pres="NE";
-                    mesec="Junij";
-                    vrsta="Plodovka";
-                    prez="DA";
-                    casK=50;
-                    casR=180;
-                    break;
-            }
+    public class ServiceTask extends AsyncTask<Void, Void, Void> {
+        private  String METHOD_NAME = "";
+        private static final String NAMESPACE = "http://tempuri.org/";
+        private static final String SOAP_ACTION = "http://tempuri.org/IService1/";
+        private  String URL="http://192.168.0.21:99/WebService";
+        protected void onPreExecute() {
 
-            if(!name.equals("")) {
+        }
+        protected Void doInBackground(Void... unused) {
+
+            try
+            {
+                METHOD_NAME="getIzdelek";
+                SoapObject request = new SoapObject(NAMESPACE, METHOD_NAME);
+                SoapSerializationEnvelope envelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
+                envelope.dotNet = true;
+                request.addProperty("ID",scanContent);
+                envelope.setOutputSoapObject(request);
+
+                HttpTransportSE androidHttpTransport = new HttpTransportSE(URL);
+
+                androidHttpTransport.call(SOAP_ACTION+"getIzdelek", envelope);
+                SoapObject response=(SoapObject) envelope.bodyIn;
+                data=response.getProperty(0).toString();
+
+            }
+            catch (Exception e)
+            {
+                Log.d("ERROR",e.getMessage());
+
+            }
+            return null;
+        }
+
+        protected void onPostExecute(Void unused) {
+            tmpIzd=data.split(";");
+            if(!data.equals("")) {
 
                 try {
                     String temp="";
@@ -334,8 +366,8 @@ public class ParcelInfoActivity extends AppCompatActivity implements View.OnClic
                             "@attribute RAZRED {'Hitra rast','Srednje hitra rast','Pocasna rast'}\n"+
 
                             "@data\n" +
-                            vrsta+", "+pres+", "+String.valueOf(casK)+", "+String.valueOf(casR)+", "+
-                            mesec+", "+prez+", ?";
+                            tmpIzd[2]+", "+tmpIzd[3]+", "+tmpIzd[6]+", "+tmpIzd[7]+", "+
+                            tmpIzd[4]+", "+tmpIzd[5]+", ?";
                     InputStream stream = new ByteArrayInputStream(temp.getBytes("UTF-8"));
                     ArffLoader loader=new ArffLoader();
                     loader.setSource(stream);
@@ -360,13 +392,14 @@ public class ParcelInfoActivity extends AppCompatActivity implements View.OnClic
                         className = data.attribute(data.numAttributes()-1).value((int)index);
                         AlertDialog alert = new AlertDialog.Builder(ParcelInfoActivity.this)
                                 .setTitle("Opozorilo")
-                                .setMessage("Seme ima naslednjo rast: "+className +". Ali želite dodati seme?")
+                                .setMessage("Dodali boste naslednje seme: \n Naziv:"+tmpIzd[1]+"\nVrsta: "+tmpIzd[2]+"\nPotrebno presajanje: "+tmpIzd[3]+"\nMesec sajenja: "+tmpIzd[4]+"\nPrezimna vrsta: "+tmpIzd[5]+"\nCas kaljenja: "+tmpIzd[6]+"\nCas rasti: "+tmpIzd[7]+"\nRast: "+className +".\nAli želite dodati seme?")
                                 .setCancelable(false)
                                 .setPositiveButton("Da", new DialogInterface.OnClickListener() {
                                     public void onClick(DialogInterface dialog, int id) {
-                                        Izdelek izd = new Izdelek(name,date,vrsta,pres,mesec,prez,className,casK,casR);
+                                        Izdelek izd = new Izdelek(tmpIzd[1],date,tmpIzd[2],tmpIzd[3],tmpIzd[4],tmpIzd[5],className, Integer.parseInt(tmpIzd[6]),Integer.parseInt(tmpIzd[7]));
                                         myApp.getParcela(pos).addIzdelek(izd);
                                         myApp.save();
+                                        mAdapter.notifyDataSetChanged();
                                     }
                                 })
                                 .setNegativeButton("Ne", null)
@@ -378,21 +411,22 @@ public class ParcelInfoActivity extends AppCompatActivity implements View.OnClic
                 {
                     Log.e("Error", e.toString());
                 }
-
-               // contentTxt.setText("Izdelek: " + name);
-                //txtDate.setText("Datum:"+date);
-
             }
-            else if(scanningResult==null)
+            else
             {
                 finish();
             }
-
         }
-        else{
-            Toast toast = Toast.makeText(getApplicationContext(),
-                    "No scan data received!", Toast.LENGTH_SHORT);
-            toast.show();
+    }
+
+    public void onActivityResult(int requestCode, int resultCode, Intent intent) {
+        IntentResult scanningResult = IntentIntegrator.parseActivityResult(requestCode, resultCode, intent);
+        if (scanningResult != null) {
+            DateFormat df = new SimpleDateFormat("dd.MM.yyyy");
+            date = df.format(Calendar.getInstance().getTime());
+            scanContent = scanningResult.getContents();
+            ServiceTask task = new ServiceTask();
+            task.execute();
         }
     }
     @Override
@@ -424,10 +458,9 @@ public class ParcelInfoActivity extends AppCompatActivity implements View.OnClic
                     imageTip.setImageResource(R.drawable.travnik);
                     break;
             }
+            mAdapter.notifyDataSetChanged();
         }
         else if(intTyp.equals("Add")) {
-            //if(myApp.size()!=0)
-              //  if(myApp.getParcela(myApp.size()-1).getParcelaLatLng()!=null)
                     fabSave.setEnabled(true);
         }
     }

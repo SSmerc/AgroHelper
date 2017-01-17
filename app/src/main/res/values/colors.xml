@@ -5,4 +5,6 @@
     <color name="colorAccent">#00a4f7</color>
     <color name="green">#c2307b15</color>
     <color name="dark_green">#1b3014</color>
+    <color name="back_item">#c4c4c4</color>
+    <color name="black">#000000</color>
 </resources>

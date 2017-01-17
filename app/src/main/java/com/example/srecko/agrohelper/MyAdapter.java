@@ -79,18 +79,7 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
                 holder.imageTip.setImageDrawable(ResourcesCompat.getDrawable(this.ac.getResources(),R.drawable.travnik,null));
                 break;
         }
-        /*holder.textIme.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                //String[] parcelInfo= new String[]{mDataset.vrniParcelo(position).getIme_parcele(),mDataset.vrniParcelo(position).getTip().toString()};
-                Intent dva = new Intent(ac, ParcelInfoActivity.class);
-                dva.putExtra("Parcela ime",mDataset.vrniParcelo(position).getIme_parcele());
-                dva.putExtra("Parcela tip",mDataset.vrniParcelo(position).getTip().toString());
-                dva.putExtra("Index",position);
-                dva.putExtra("Intent","Info");
-                ac.startActivity(dva);
-            }
-        });*/
+
     }
     // Return the size of your dataset (invoked by the layout manager)
     @Override

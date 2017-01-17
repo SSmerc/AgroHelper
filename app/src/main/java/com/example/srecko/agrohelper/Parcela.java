@@ -47,13 +47,6 @@ public class Parcela {
     public void setIzdelki(ArrayList<Izdelek> izdelki) {
         this.izdelki = izdelki;
     }
-  /*  public void izbrisiParcelo()
-    {
-        parcela.clear();
-        ime_parcele=null;
-
-        tip=null;
-    }*/
 
     public String getIme_parcele() {
         return ime_parcele;
@@ -75,8 +68,11 @@ public class Parcela {
         return parcela;
     }
 
-    public void setParcela(ArrayList<LatLng> parcela) {
+    public void setParcelaLatLng(ArrayList<LatLng> parcela) {
         this.parcela = parcela;
+    }
+    public void deleteParcelaLatLng() {
+        this.parcela.clear();
     }
 
     public Parcela(String ime_parcele, ArrayList<LatLng> parcela, Tip_parcele tip, ParcelInfo pi) {
@@ -88,7 +84,15 @@ public class Parcela {
     public ParcelInfo getParcelInfo(){return pi;}
     public void addIzdelek(Izdelek i)
     {
-        izdelki.add(i);
+        izdelki.add(0,i);
+    }
+    public String getIzdelek(int i)
+    {
+        return izdelki.get(i).getNaziv();
+    }
+    public void deleteIzdelek(int i)
+    {
+        izdelki.remove(i);
     }
     public int sizeIzdelki(){
         if(izdelki.size()!=0)

@@ -17,7 +17,7 @@ import java.util.List;
 public class MyAdapterIzdelki extends RecyclerView.Adapter<MyAdapterIzdelki.ViewHolder> {
     private DataAll mDataset;
     private  Activity ac;
-    private int pos=-1;
+    private int pos;
     // Provide a reference to the views for each data item
     // Complex data items may need more than one view per item, and
     // you provide access to all the views for a data item in a view holder
@@ -25,7 +25,7 @@ public class MyAdapterIzdelki extends RecyclerView.Adapter<MyAdapterIzdelki.View
         // each data item is just a string in this case
         public TextView textIme,textDatum;
         public ImageView imageTip;
-        public int pos;
+       // public int pos;
         public ViewHolder(View v) {
             super(v);
             textIme=(TextView) v.findViewById(R.id.textIme);
@@ -62,40 +62,11 @@ public class MyAdapterIzdelki extends RecyclerView.Adapter<MyAdapterIzdelki.View
         List<Izdelek> tmpIzd= mDataset.vrniParcelo(pos).getIzdelki();
         holder.textIme.setText(tmpIzd.get(position).getNaziv());
         holder.textDatum.setText(tmpIzd.get(position).getDatum());
-        /*switch (mDataset.vrniParcelo(position).getTip())
-        {
-            case GOZD:
-               holder.imageTip.setImageDrawable(ResourcesCompat.getDrawable(this.ac.getResources(),R.drawable.gozd,null));
-                break;
-            case POLJE:
-                holder.imageTip.setImageDrawable(ResourcesCompat.getDrawable(this.ac.getResources(),R.drawable.polje,null));
-                break;
-            case TRAVNIK:
-                holder.imageTip.setImageDrawable(ResourcesCompat.getDrawable(this.ac.getResources(),R.drawable.travnik,null));
-                break;
-        }*/
-        /*holder.textIme.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                //String[] parcelInfo= new String[]{mDataset.vrniParcelo(position).getIme_parcele(),mDataset.vrniParcelo(position).getTip().toString()};
-                Intent dva = new Intent(ac, ParcelInfoActivity.class);
-                dva.putExtra("Parcela ime",mDataset.vrniParcelo(position).getIme_parcele());
-                dva.putExtra("Parcela tip",mDataset.vrniParcelo(position).getTip().toString());
-                dva.putExtra("Index",position);
-                dva.putExtra("Intent","Info");
-                ac.startActivity(dva);
-            }
-        });*/
     }
     // Return the size of your dataset (invoked by the layout manager)
     @Override
     public int getItemCount() {
         return mDataset.vrniParcelo(pos).sizeIzdelki();
-       /* pos++;
-        if(pos<mDataset.steviloParcel()) {
-            return mDataset.vrniParcelo(pos).sizeIzdelki();
-        }
-        else
-            return 0;*/
+
     }
 }
